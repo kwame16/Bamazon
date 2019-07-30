@@ -1,39 +1,49 @@
-var inquirer = require("inquirer");
-var mysql = require ("mysql");
+const inquirer = require("inquirer");
+const mysql = require("mysql");
 
+const connection = mysql.createConnection({
+  host: "localhost",
 
-var connection = mysql.createConnection({
-    host: "localhost",
+  port: 3306,
 
-    port: 3306,
+  user: "root",
 
-    user: "root",
-
-    password: "Lanyla2330!",
-    database:"bamazon",
+  password: "Lanyla2330!",
+  database: "bamazon"
 });
 
-connection.connect(function(err){
-    if (err) throw err;
-    console.log("connected as id " + connection.threadId);
+connection.connect(function(err) {
+  if (err) throw err;
+  console.log("connected as id " + connection.threadId + "\n");
+  displayProducts();
 
-    inquirer.prompt([
-        {type:"list",
-        message:"choose from the following function: ",
-        choices:["Songs sung by an Artist", "Artist who have appeared on the top 5000",
-            "Data from a specific range", "Songs in the top 5000"],
-            name:"userChoice"
-
-
-    }])
-
-    afterConnection();
-  });
-  
-  function afterConnection() {
-    connection.query("SELECT * FROM songs", function(err, res) {
+  function displayProducts() {
+    connection.query("SELECT * FROM products", function(err, data) {
       if (err) throw err;
-      console.log(res);
-      connection.end();
+      console.table(data);
+
+      buy();
+      //   function
     });
-};
+  }
+});
+
+function buy() {
+  inquirer.prompt([
+    {
+      type: "input",
+      message: "Do you know the ID of the product you would like to purchase?",
+      // choices:["Do you know the ID of the product you would like to purchase?",
+      //         "How many units of the product would you like to buy?",
+      name: "userChoice"
+    },
+    {
+        type: "input",
+        message: "How many units of the product would you like to buy?",
+        name: "userChoice"
+    },
+  ]);
+}
+// });
+
+//   connection.end();
